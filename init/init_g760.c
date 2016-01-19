@@ -184,3 +184,4 @@ void init_msm_properties(unsigned long msm_id, unsigned long msm_ver, char *boar
         property_set("ro.build.description", "G760-L01-user 4.4.4 GRJ90 C00B380 release-keys");
         property_set("ro.build.fingerprint", "Huawei/G760-L01/hwG760-L01:4.4.4/HuaweiG760-L01/C00B380:user/release-keys");
 }
+}
