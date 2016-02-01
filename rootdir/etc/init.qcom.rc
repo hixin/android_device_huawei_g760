@@ -183,6 +183,9 @@ on boot
     chmod 2770 /dev/socket/qmux_bluetooth
     mkdir /dev/socket/qmux_gps 0770 gps gps
     chmod 2770 /dev/socket/qmux_gps
+    # NFC
+    mkdir /dev/socket/qmux_nfc 0770 nfc nfc
+    chmod 2770 /dev/socket/qmux_nfc
 
     #Create NETMGR daemon socket area
     mkdir /dev/socket/netmgr 0750 radio radio
@@ -285,6 +288,29 @@ on boot
     chown system system /sys/class/leds/red/blink
     chown system system /sys/class/leds/green/blink
     chown system system /sys/class/leds/blue/blink
+
+    # NFC
+    chown nfc nfc /sys/nfc/nfc_fwupdate
+    chown nfc nfc /sys/nfc/nxp_config_name
+    chown nfc nfc /sys/nfc/nfc_brcm_conf_name
+    chown nfc nfc /sys/nfc/nfc_sim_switch
+    chown nfc nfc /sys/nfc/nfc_sim_status
+    chown nfc nfc /sys/nfc/rd_nfc_sim_status
+    chown nfc nfc /sys/nfc/nfc_enable_status
+    chown nfc nfc /sys/nfc/nfc_card_num
+    chown nfc nfc /sys/nfc/nfc_chip_type
+    chown nfc nfc /sys/nfc/nfc_dmd_notify
+
+    chmod 0444 /sys/nfc/nfc_fwupdate
+    chmod 0444 /sys/nfc/nxp_config_name
+    chmod 0444 /sys/nfc/nfc_brcm_conf_name
+    chmod 0444 /sys/nfc/nfc_sim_switch
+    chmod 0444 /sys/nfc/nfc_sim_status
+    chmod 0444 /sys/nfc/rd_nfc_sim_status
+    chmod 0444 /sys/nfc/nfc_enable_status
+    chmod 0444 /sys/nfc/nfc_card_num
+    chmod 0444 /sys/nfc/nfc_chip_type
+    chmod 0444 /sys/nfc/nfc_dmd_notify
 
 # msm specific files that need to be created on /data
 on post-fs-data
@@ -400,6 +426,10 @@ service timekeep /system/bin/timekeep restore
     # NFC local data and nfcee xml storage
     mkdir /data/nfc 0770 nfc nfc
     mkdir /data/nfc/param 0770 nfc nfc
+    setprop ro.nfc.port "I2C" 
+    setprop ro.hwpp_nfc_nocheckinvalidins "true"
+    setprop ro.config.nfcdisabled "false"
+    setprop ro.config.nfc_switch "1"
 
     # Sensor
     mkdir /persist/sensors 0770 system system
@@ -745,7 +775,7 @@ service qmiproxy /system/bin/qmiproxy
 service qmuxd /system/bin/qmuxd
     class core
     user root
-    group radio audio bluetooth gps qcom_diag
+    group radio audio bluetooth gps nfc qcom_diag
 
 service netmgrd /system/bin/netmgrd
     class core
@@ -1005,8 +1035,10 @@ service hcidump /system/bin/sh /system/etc/hcidump.sh
     disabled
     oneshot
 
-service charger /charger
+service charger /sbin/healthd -c
     class charger
+    critical
+    seclabel u:r:healthd:s0
 
 service ssr_diag /system/bin/ssr_diag
     class late_start
