@@ -31,4 +31,4 @@ PRODUCT_GMS_CLIENTID_BASE := android-G760
 
 # Unofficial build ID
 #TARGET_UNOFFICIAL_BUILD_ID := Desalesouche
-TARGET_UNOFFICIAL_BUILD_ID := mparus
+TARGET_UNOFFICIAL_BUILD_ID := mparus_nfc
