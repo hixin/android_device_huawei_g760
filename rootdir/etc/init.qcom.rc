@@ -485,7 +485,7 @@ service qrngp /system/bin/qrngp -f
 
 on property:sys.boot_completed=1
    start qrngp	
-#   start mpdecision
+   start mpdecision
 
 service qseecomd /system/bin/qseecomd
    class core
@@ -1086,8 +1086,15 @@ service diag_mdlog_stop /system/bin/diag_mdlog -k
     disabled
     oneshot
 
+service bms-sh /system/bin/sh /init.qcom.bms.sh
+    class main
+    user root
+    oneshot
+
 service vm_bms /system/bin/vm_bms
-    class core
+    user root
+    group root
+    disabled
 
 service wfdservice /system/bin/wfdservice
     class main

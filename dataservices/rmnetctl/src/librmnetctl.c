@@ -69,13 +69,14 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 			      RMNET_INGRESS_FORMAT_DEMUXING | \
 			      RMNET_INGRESS_FORMAT_MAP_COMMANDS | \
 			      RMNET_INGRESS_FORMAT_MAP_CKSUMV3 | \
-			      RMNET_INGRESS_FORMAT_MAP_CKSUMV4)
+                              RMNET_INGRESS_FORMAT_MAP_CKSUMV4)
 #define EGRESS_FLAGS_MASK    (RMNET_EGRESS_FORMAT__RESERVED__ | \
 			      RMNET_EGRESS_FORMAT_MAP | \
 			      RMNET_EGRESS_FORMAT_AGGREGATION | \
 			      RMNET_EGRESS_FORMAT_MUXING | \
 			      RMNET_EGRESS_FORMAT_MAP_CKSUMV3 | \
-			      RMNET_EGRESS_FORMAT_MAP_CKSUMV4)
+                              RMNET_EGRESS_FORMAT_MAP_CKSUMV4)
+
 
 #define min(a, b) (((a) < (b)) ? (a) : (b))
 /*===========================================================================
