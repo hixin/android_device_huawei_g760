@@ -31,14 +31,14 @@
   <item name="screen.on">90</item>  <!-- ~200mA -->
   <item name="bluetooth.active">130</item> <!-- Bluetooth data transfer, ~10mA -->
   <item name="bluetooth.on">1</item>  <!-- Bluetooth on & connectable, but not connected, ~0.1mA -->
-  <item name="screen.full">150</item>  <!-- ~300mA -->
-  <item name="wifi.on">1</item>  <!-- ~3mA -->
+  <item name="screen.full">211</item>  <!-- ~300mA -->
+  <item name="wifi.on">6</item>  <!-- ~3mA -->
   <item name="wifi.active">170</item>  <!-- WIFI data transfer, ~200mA -->
   <item name="wifi.scan">190</item>  <!-- WIFI network scanning, ~100mA -->
   <item name="dsp.audio">50</item> <!-- ~10mA -->
   <item name="dsp.video">300</item> <!-- ~50mA -->
-  <item name="radio.active">130</item> <!-- ~200mA -->
-  <item name="radio.scanning">100</item> <!-- cellular radio scanning for signal, ~10mA -->
+  <item name="radio.active">185</item> <!-- ~200mA -->
+  <item name="radio.scanning">122</item> <!-- cellular radio scanning for signal, ~10mA -->
   <item name="gps.on">60</item> <!-- ~50mA -->
   <!-- Current consumed by the radio at different signal strengths, when paging -->
   <array name="radio.on"> <!-- Strength 0 to BINS-1 -->
@@ -48,24 +48,29 @@
   <!-- Different CPU speeds as reported in
        /sys/devices/system/cpu/cpu0/cpufreq/stats/time_in_state -->
   <array name="cpu.speeds">
-      <value>300000</value> <!-- 400 MHz CPU speed -->
-      <value>384000</value>
-      <value>600000</value>
-      <value>787200</value>
+      <value>200000</value> <!-- 400 MHz CPU speed -->
+      <value>400000</value> <!-- 400 MHz CPU speed -->
+      <value>533333</value>
+      <value>800000</value>
       <value>998400</value>
-      <value>1190400</value>
+      <value>1094400</value>
+      <value>1152000</value>
+      <value>1209600</value>
   </array>
   <!-- Current when CPU is idle -->
   <item name="cpu.idle">7</item>
+  <item name="cpu.awake">35</item>
   <!-- Current at each CPU speed, as per 'cpu.speeds' -->
   <array name="cpu.active">
       <value>90</value>  <!-- ~100mA -->
-      <value>95</value>
       <value>105</value>
-      <value>110</value>
-      <value>120</value>
-      <value>180</value>
+      <value>118</value>
+      <value>127</value>
+      <value>133</value>
+      <value>173</value>
+      <value>209</value>
+      <value>216</value>
   </array>
   <!-- This is the battery capacity in mAh (measured at nominal voltage) -->
-  <item name="battery.capacity">2000</item>
+  <item name="battery.capacity">3000</item>
 </device>
