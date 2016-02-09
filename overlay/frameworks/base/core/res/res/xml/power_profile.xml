@@ -60,6 +60,7 @@
   <!-- Current when CPU is idle -->
   <item name="cpu.idle">7</item>
   <item name="cpu.awake">35</item>
+  <item name="cpu.wakeup">121</item>
   <!-- Current at each CPU speed, as per 'cpu.speeds' -->
   <array name="cpu.active">
       <value>90</value>  <!-- ~100mA -->
