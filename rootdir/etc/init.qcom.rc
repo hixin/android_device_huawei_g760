@@ -285,9 +285,13 @@ on boot
 
     # Change ownership and permission for led
     # Enable writing to led blink node from userspace
-    chown system system /sys/class/leds/red/blink
-    chown system system /sys/class/leds/green/blink
-    chown system system /sys/class/leds/blue/blink
+    chown system system /sys/class/leds/red/brightness
+    chown system system /sys/class/leds/green/brightness
+    chown system system /sys/class/leds/blue/brightness
+    chmod 0664 /sys/class/leds/red/brightness
+    chmod 0664 /sys/class/leds/green/brightness
+    chmod 0664 /sys/class/leds/blue/brightness
+    chmod 0664 /sys/class/leds/lcd-backlight/brightness
 
     # NFC
     chown nfc nfc /sys/nfc/nfc_fwupdate

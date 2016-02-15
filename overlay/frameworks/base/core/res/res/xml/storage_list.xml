@@ -50,10 +50,8 @@
         android:allowMassStorage="true" />
 
     <!-- external USB drive -->
-    <storage android:mountPoint="/storage/usbotg"
+    <storage android:mountPoint="/storage/usbdisk"
         android:storageDescription="@string/storage_usb"
         android:primary="false"
-        android:removable="true"
-        android:emulated="false"
-        android:allowMassStorage="true" />
+        android:removable="true" />
 </StorageList>
