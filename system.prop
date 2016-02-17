@@ -94,3 +94,12 @@ ro.config.hw_camera_mfd=true
 persist.camera.longshot.enable=true
 ro.config.camerarc=true
 persist.camera.pip.support=0
+
+#OTG
+ro.mmi.normal.otg=false
+ro.mmi.mn.otg=true
+ro.mmi.as.otg=true
+ro.mmi.ms.otg=true
+ro.mmi.aas.otg=true
+ro.mmi.otg.mount.path=/storage/usbdisk
+persist.sys.isUsbOtgEnabled=true

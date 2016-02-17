@@ -111,8 +111,6 @@ TARGET_LIBINIT_DEFINES_FILE := $(LOCAL_PATH)/init/init_g760.c
 ADDITIONAL_DEFAULT_PROPERTIES += ro.adb.secure=0
 ADDITIONAL_DEFAULT_PROPERTIES += ro.secure=0
 ADDITIONAL_DEFAULT_PROPERTIES += ro.allow.mock.location=1
-ADDITIONAL_DEFAULT_PROPERTIES += persist.sys.usb.config=mass_storage
-#ADDITIONAL_DEFAULT_PROPERTIES += persist.sys.usb.config=mtp 
 ADDITIONAL_DEFAULT_PROPERTIES += ro.config.show_battery_id=true 
 ADDITIONAL_DEFAULT_PROPERTIES += ro.mmi.battery.minvalue=170 
 
@@ -167,9 +165,11 @@ TARGET_USES_LOGD := false
 TARGET_RIL_VARIANT := caf
 PROTOBUF_SUPPORTED := true
 
+
 # FM
 AUDIO_FEATURE_ENABLED_FM := true
 TARGET_QCOM_NO_FM_FIRMWARE := true
+BOARD_HAVE_QCOM_FM := true
 
 # SELinux
 include device/qcom/sepolicy/sepolicy.mk
