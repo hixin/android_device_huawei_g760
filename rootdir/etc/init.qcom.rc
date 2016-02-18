@@ -401,6 +401,8 @@ on post-fs-data
     #Create directory for hostapd
     mkdir /data/hostapd 0770 system wifi
 
+    setprop vold.post_fs_data_done 1
+
 service timekeep /system/bin/timekeep restore
     class late_start
     user root

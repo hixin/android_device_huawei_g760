@@ -79,7 +79,7 @@ BOARD_CHARGER_ENABLE_SUSPEND := true
 BOARD_CHARGER_SHOW_PERCENTAGE := true
 
 #Enable HW based full disk encryption
-TARGET_HW_DISK_ENCRYPTION := true
+TARGET_HW_DISK_ENCRYPTION := false 
 
 # Fonts
 EXTENDED_FONT_FOOTPRINT := true
@@ -235,3 +235,4 @@ ifeq ($(HOST_OS),linux)
 endif
 # endif
 DONT_DEXPREOPT_PREBUILTS := true
+
