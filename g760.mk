@@ -299,3 +299,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
 # never dexopt the keyhandler
 $(call add-product-dex-preopt-module-config,com.cyanogenmod.keyhandler,disable)
 $(call inherit-product, frameworks/native/build/phone-xhdpi-1024-dalvik-heap.mk)
+
+# TWRP
+PRODUCT_COPY_FILES += \
+ $(LOCAL_PATH)/recovery/twrp.fstab:recovery/root/etc/twrp.fstab
