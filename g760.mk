@@ -146,13 +146,19 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     camera.msm8916 \
     mm-qcamera-app \
-    libmmjpeg_interface \
     libmm-omxcore \
-    libqomx_core
+    libmmjpeg_interface \
+    libqomx_core \
+    libstlport \
+    libcurl \
+    libhuawei_cutilz \
+    Snap
 
-# Camera
-# PRODUCT_PACKAGES += \
-#     SnapdragonCamera
+# Snapdragoncamera
+PRODUCT_PACKAGES += \
+    SnapdragonCamera \
+    libjni_snapcammosaic \
+    libjni_snapcamtinyplanet
 
 # Charger
 PRODUCT_PACKAGES += \
