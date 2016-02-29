@@ -25,8 +25,6 @@
 
 #include "ImageUtils.h"
 
-const ImageType ImageUtils::IMAGE_TYPE_NOIMAGE = 0;
-
 void ImageUtils::rgba2yvu(ImageType out, ImageType in, int width, int height)
 {
   int r,g,b, a;

@@ -30,8 +30,6 @@
 
 #define LOG_TAG "AlignFeatures"
 
-const double Align::DEFAULT_MAX_DISPARITY=0.1;//0.4;
-
 Align::Align()
 {
   width = height = 0;

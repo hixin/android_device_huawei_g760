@@ -297,7 +297,7 @@ public class PhotoUI implements PieListener,
         mPrevOrientationResize = false;
 
         Point size = new Point();
-        mActivity.getWindowManager().getDefaultDisplay().getSize(size);
+        mActivity.getWindowManager().getDefaultDisplay().getRealSize(size);
         mScreenRatio = CameraUtil.determineRatio(size.x, size.y);
         if (mScreenRatio == CameraUtil.RATIO_16_9) {
             int l = size.x > size.y ? size.x : size.y;
@@ -386,14 +386,14 @@ public class PhotoUI implements PieListener,
                 if (width > height) {
                     if(Math.max(width, height * mAspectRatio) > width) {
                         scaledTextureWidth = width;
-                        scaledTextureHeight = height;
+                        scaledTextureHeight = width / mAspectRatio;
                     } else {
                         scaledTextureWidth = height * mAspectRatio;
                         scaledTextureHeight = height;
                     }
                 } else {
                     if(Math.max(height, width * mAspectRatio) > height) {
-                        scaledTextureWidth = width;
+                        scaledTextureWidth = height / mAspectRatio;
                         scaledTextureHeight = height;
                     } else {
                         scaledTextureWidth = width;
@@ -549,7 +549,6 @@ public class PhotoUI implements PieListener,
         });
         if (mController.isImageCaptureIntent()) {
             hideSwitcher();
-            mSwitcher.setSwitcherVisibility(false);
             ViewGroup cameraControls = (ViewGroup) mRootView.findViewById(R.id.camera_controls);
             mActivity.getLayoutInflater().inflate(R.layout.review_module_control, cameraControls);
 
@@ -608,11 +607,6 @@ public class PhotoUI implements PieListener,
     public void showSwitcher() {
         mSwitcher.setVisibility(View.VISIBLE);
     }
-
-    public void setSwitcherIndex() {
-        mSwitcher.setCurrentIndex(ModuleSwitcher.PHOTO_MODULE_INDEX);
-    }
-
     // called from onResume but only the first time
     public void initializeFirstTime() {
         // Initialize shutter button.
@@ -1006,7 +1000,6 @@ public class PhotoUI implements PieListener,
     }
 
     protected void showCapturedImageForReview(byte[] jpegData, int orientation, boolean mirror) {
-        mCameraControls.hideCameraSettings();
         mDecodeTaskForReview = new DecodeImageForReview(jpegData, orientation, mirror);
         mDecodeTaskForReview.execute();
         mOnScreenIndicators.setVisibility(View.GONE);
@@ -1018,7 +1011,6 @@ public class PhotoUI implements PieListener,
     }
 
     protected void hidePostCaptureAlert() {
-        mCameraControls.showCameraSettings();
         if (mDecodeTaskForReview != null) {
             mDecodeTaskForReview.cancel(true);
         }

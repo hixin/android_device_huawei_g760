@@ -117,6 +117,8 @@ import java.io.IOException;
 
 import static com.android.camera.CameraManager.CameraOpenErrorCallback;
 
+import android.media.AudioManager;
+
 public class CameraActivity extends Activity
         implements ModuleSwitcher.ModuleSwitchListener,
         ActionBar.OnMenuVisibilityListener,
@@ -186,14 +188,8 @@ public class CameraActivity extends Activity
     private PlaceholderManager mPlaceholderManager;
     private int mCurrentModuleIndex;
     private CameraModule mCurrentModule;
-    private PhotoModule mPhotoModule;
-    private VideoModule mVideoModule;
-    private WideAnglePanoramaModule mPanoModule;
     private FrameLayout mAboveFilmstripControlLayout;
-    private FrameLayout mCameraRootFrame;
-    private View mCameraPhotoModuleRootView;
-    private View mCameraVideoModuleRootView;
-    private View mCameraPanoModuleRootView;
+    private View mCameraModuleRootView;
     private FilmStripView mFilmStripView;
     private ProgressBar mBottomProgress;
     private View mPanoStitchingPanel;
@@ -227,7 +223,8 @@ public class CameraActivity extends Activity
     private LocalMediaObserver mLocalImagesObserver;
     private LocalMediaObserver mLocalVideosObserver;
 
-    private final int DEFAULT_SYSTEM_UI_VISIBILITY = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+    private final int DEFAULT_SYSTEM_UI_VISIBILITY = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                                                   | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
 
     private boolean mPendingDeletion = false;
 
@@ -242,6 +239,9 @@ public class CameraActivity extends Activity
     // Keep track of data request here to avoid creating useless UpdateThumbnailTask.
     private boolean mDataRequested;
 
+    private AudioManager mAudioManager;
+    private int mShutterVol;
+    private int mOriginalMasterVol;
     private WakeLock mWakeLock;
 
     private class MyOrientationEventListener
@@ -376,7 +376,8 @@ public class CameraActivity extends Activity
     }
 
     public boolean isDeveloperMenuEnabled() {
-        return mDeveloperMenuEnabled;
+        //return mDeveloperMenuEnabled;
+        return true;
     }
 
     public void enableDeveloperMenu() {
@@ -624,19 +625,12 @@ public class CameraActivity extends Activity
 
         View decorView = getWindow().getDecorView();
         int currentSystemUIVisibility = decorView.getSystemUiVisibility();
-        boolean hidePreview = getResources().getBoolean(R.bool.hide_navigation_bar);
-
-        int systemUIVisibility = DEFAULT_SYSTEM_UI_VISIBILITY;
-        if (hidePreview)
-            systemUIVisibility |= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-
-        int systemUINotVisible = View.SYSTEM_UI_FLAG_LOW_PROFILE | View.SYSTEM_UI_FLAG_FULLSCREEN;
-        if (hidePreview)
-            systemUINotVisible |= (View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-
-        int newSystemUIVisibility = systemUIVisibility
-                | (visible ? View.SYSTEM_UI_FLAG_VISIBLE : systemUINotVisible);
+        int newSystemUIVisibility = DEFAULT_SYSTEM_UI_VISIBILITY
+                | (visible ? View.SYSTEM_UI_FLAG_VISIBLE :
+                    View.SYSTEM_UI_FLAG_LOW_PROFILE
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
         if (newSystemUIVisibility != currentSystemUIVisibility) {
             decorView.setSystemUiVisibility(newSystemUIVisibility);
         }
@@ -1408,6 +1402,12 @@ public class CameraActivity extends Activity
         }
         GcamHelper.init(getContentResolver());
 
+        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        mOriginalMasterVol = mAudioManager.getMasterVolume();
+        mShutterVol =  SystemProperties.getInt("persist.camera.snapshot.volume", -1);
+        if (mShutterVol >= 0 && mShutterVol <= 100 )
+            mAudioManager.setMasterVolume(mShutterVol,0);
+
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         setContentView(R.layout.camera_filmstrip);
 
@@ -1434,10 +1434,7 @@ public class CameraActivity extends Activity
         mPlaceholderManager.addTaskListener(mPlaceholderListener);
         LayoutInflater inflater = getLayoutInflater();
         View rootLayout = inflater.inflate(R.layout.camera, null, false);
-        mCameraRootFrame = (FrameLayout)rootLayout.findViewById(R.id.camera_root_frame);
-        mCameraPhotoModuleRootView = rootLayout.findViewById(R.id.camera_photo_root);
-        mCameraVideoModuleRootView = rootLayout.findViewById(R.id.camera_video_root);
-        mCameraPanoModuleRootView = rootLayout.findViewById(R.id.camera_pano_root);
+        mCameraModuleRootView = rootLayout.findViewById(R.id.camera_app_root);
         mPanoStitchingPanel = findViewById(R.id.pano_stitching_progress_panel);
         mBottomProgress = (ProgressBar) findViewById(R.id.pano_stitching_progress_bar);
         mCameraPreviewData = new CameraPreviewData(rootLayout,
@@ -1486,6 +1483,7 @@ public class CameraActivity extends Activity
 
         mOrientationListener = new MyOrientationEventListener(this);
         setModuleFromIndex(moduleIndex);
+        mCurrentModule.init(this, mCameraModuleRootView);
 
         if (!mSecureCamera) {
             mDataAdapter = mWrappedDataAdapter;
@@ -1590,6 +1588,8 @@ public class CameraActivity extends Activity
 
     @Override
     public void onPause() {
+        if (mShutterVol >= 0 && mShutterVol <= 100)
+            mAudioManager.setMasterVolume(mOriginalMasterVol,0);
         // Delete photos that are pending deletion
         performDeletion();
         mOrientationListener.disable();
@@ -1613,6 +1613,9 @@ public class CameraActivity extends Activity
 
     @Override
     public void onResume() {
+        if (mShutterVol >= 0 && mShutterVol <= 100)
+            mAudioManager.setMasterVolume(mShutterVol,0);
+
         UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
                 UsageStatistics.ACTION_FOREGROUNDED, this.getClass().getSimpleName());
 
@@ -1673,6 +1676,8 @@ public class CameraActivity extends Activity
             mWakeLock.release();
             Log.d(TAG, "wake lock release");
         }
+        if (mShutterVol >= 0 && mShutterVol <= 100)
+            mAudioManager.setMasterVolume(mOriginalMasterVol,0);
         if (mSecureCamera) {
             unregisterReceiver(mScreenOffReceiver);
         }
@@ -1724,7 +1729,9 @@ public class CameraActivity extends Activity
     }
 
     public void setPreviewGestures(PreviewGestures previewGestures) {
-        mFilmStripView.setPreviewGestures(previewGestures);
+        if(mFilmStripView != null) {
+            mFilmStripView.setPreviewGestures(previewGestures);
+        }
     }
 
     protected void updateStorageSpace() {
@@ -1819,53 +1826,32 @@ public class CameraActivity extends Activity
      * index an sets it as mCurrentModule.
      */
     private void setModuleFromIndex(int moduleIndex) {
-        mCameraPhotoModuleRootView.setVisibility(View.GONE);
-        mCameraVideoModuleRootView.setVisibility(View.GONE);
-        mCameraPanoModuleRootView.setVisibility(View.GONE);
-        mCameraRootFrame.removeAllViews();
         mCurrentModuleIndex = moduleIndex;
         switch (moduleIndex) {
             case ModuleSwitcher.VIDEO_MODULE_INDEX:
-                if(mVideoModule == null) {
-                    mVideoModule = new VideoModule();
-                    mVideoModule.init(this, mCameraVideoModuleRootView);
-                }
-                mCurrentModule = mVideoModule;
-                mCameraRootFrame.addView(mCameraVideoModuleRootView);
-                mCameraVideoModuleRootView.setVisibility(View.VISIBLE);
+                mCurrentModule = new VideoModule();
                 break;
 
             case ModuleSwitcher.PHOTO_MODULE_INDEX:
-                if(mPhotoModule == null) {
-                    mPhotoModule = new PhotoModule();
-                    mPhotoModule.init(this, mCameraPhotoModuleRootView);
-                }
-                mCurrentModule = mPhotoModule;
-                mCameraRootFrame.addView(mCameraPhotoModuleRootView);
-                mCameraPhotoModuleRootView.setVisibility(View.VISIBLE);
+                mCurrentModule = new PhotoModule();
                 break;
 
             case ModuleSwitcher.WIDE_ANGLE_PANO_MODULE_INDEX:
-                if(mPanoModule == null) {
-                    mPanoModule = new WideAnglePanoramaModule();
-                    mPanoModule.init(this, mCameraPanoModuleRootView);
-                }
-                mCurrentModule = mPanoModule;
-                mCameraRootFrame.addView(mCameraPanoModuleRootView);
-                mCameraPanoModuleRootView.setVisibility(View.VISIBLE);
+                mCurrentModule = new WideAnglePanoramaModule();
                 break;
 
-            case ModuleSwitcher.LIGHTCYCLE_MODULE_INDEX: //Unused module for now
-            case ModuleSwitcher.GCAM_MODULE_INDEX:  //Unused module for now
+            case ModuleSwitcher.LIGHTCYCLE_MODULE_INDEX:
+                mCurrentModule = PhotoSphereHelper.createPanoramaModule();
+                break;
+            case ModuleSwitcher.GCAM_MODULE_INDEX:
+                // Force immediate release of Camera instance
+                CameraHolder.instance().strongRelease();
+                mCurrentModule = GcamHelper.createGcamModule();
+                break;
             default:
                 // Fall back to photo mode.
-                if(mPhotoModule == null) {
-                    mPhotoModule = new PhotoModule();
-                    mPhotoModule.init(this, mCameraPhotoModuleRootView);
-                }
-                mCurrentModule = mPhotoModule;
-                mCameraRootFrame.addView(mCameraPhotoModuleRootView);
-                mCameraPhotoModuleRootView.setVisibility(View.VISIBLE);
+                mCurrentModule = new PhotoModule();
+                mCurrentModuleIndex = ModuleSwitcher.PHOTO_MODULE_INDEX;
                 break;
         }
     }
@@ -1905,6 +1891,7 @@ public class CameraActivity extends Activity
     }
 
     private void openModule(CameraModule module) {
+        module.init(this, mCameraModuleRootView);
         module.onResumeBeforeSuper();
         module.onResumeAfterSuper();
     }
@@ -1912,6 +1899,8 @@ public class CameraActivity extends Activity
     private void closeModule(CameraModule module) {
         module.onPauseBeforeSuper();
         module.onPauseAfterSuper();
+        ((ViewGroup) mCameraModuleRootView).removeAllViews();
+        ((ViewGroup) mCameraModuleRootView).clearDisappearingChildren();
     }
 
     private void performDeletion() {

@@ -42,11 +42,14 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.view.View.OnLayoutChangeListener;
 
 import com.android.camera.CameraPreference.OnPreferenceChangedListener;
+import com.android.camera.FocusOverlayManager.FocusUI;
 import com.android.camera.ui.AbstractSettingPopup;
 import com.android.camera.ui.CameraControls;
 import com.android.camera.ui.CameraRootView;
+import com.android.camera.ui.FocusIndicator;
 import com.android.camera.ui.ListSubMenu;
 import com.android.camera.ui.ModuleSwitcher;
 import com.android.camera.ui.PieRenderer;
@@ -59,6 +62,7 @@ import com.android.camera.util.CameraUtil;
 public class VideoUI implements PieRenderer.PieListener,
         PreviewGestures.SingleTapListener,
         CameraRootView.MyDisplayListener,
+	FocusUI,
         SurfaceHolder.Callback,
         PauseButton.OnPauseButtonListener {
     private static final String TAG = "CAM_VideoUI";
@@ -226,15 +230,15 @@ public class VideoUI implements PieRenderer.PieListener,
         });
 
         initializeMiscControls();
-        initializeControlByIntent();
         initializeOverlay();
+        initializeControlByIntent();
         initializePauseButton();
         mAnimationManager = new AnimationManager();
         mOrientationResize = false;
         mPrevOrientationResize = false;
 
         Point size = new Point();
-        mActivity.getWindowManager().getDefaultDisplay().getSize(size);
+        mActivity.getWindowManager().getDefaultDisplay().getRealSize(size);
         mScreenRatio = CameraUtil.determineRatio(size.x, size.y);
         if (mScreenRatio == CameraUtil.RATIO_16_9) {
             int l = size.x > size.y ? size.x : size.y;
@@ -328,13 +332,13 @@ public class VideoUI implements PieRenderer.PieListener,
         }
 
         mCameraControls.setPreviewRatio(mAspectRatio, false);
-        layoutPreview((float) ratio);
+        layoutPreview((float)ratio);
     }
 
     private void layoutPreview(float ratio) {
         FrameLayout.LayoutParams lp = null;
 
-        float scaledTextureWidth, scaledTextureHeight;
+        float scaledTextureWidth = 0.0f, scaledTextureHeight = 0.0f;
         int rotation = CameraUtil.getDisplayRotation(mActivity);
         if (mScreenRatio == CameraUtil.RATIO_16_9
                 && CameraUtil.determinCloseRatio(ratio) == CameraUtil.RATIO_4_3) {
@@ -380,14 +384,14 @@ public class VideoUI implements PieRenderer.PieListener,
                 if (width > height) {
                     if(Math.max(width, height * mAspectRatio) > width) {
                         scaledTextureWidth = width;
-                        scaledTextureHeight = height;
+                        scaledTextureHeight = width / mAspectRatio;
                     } else {
                         scaledTextureWidth = height * mAspectRatio;
                         scaledTextureHeight = height;
                     }
                 } else {
                     if(Math.max(height, width * mAspectRatio) > height) {
-                        scaledTextureWidth = width;
+                        scaledTextureWidth = height / mAspectRatio;
                         scaledTextureHeight = height;
                     } else {
                         scaledTextureWidth = width;
@@ -413,6 +417,11 @@ public class VideoUI implements PieRenderer.PieListener,
         if(lp != null) {
             mSurfaceView.setLayoutParams(lp);
             mSurfaceView.requestLayout();
+        }
+
+        if (scaledTextureWidth > 0 && scaledTextureHeight > 0) {
+            mController.onScreenSizeChanged((int) scaledTextureWidth,
+                    (int) scaledTextureHeight);
         }
     }
 
@@ -477,10 +486,6 @@ public class VideoUI implements PieRenderer.PieListener,
 
     public void showSwitcher() {
         mSwitcher.setVisibility(View.VISIBLE);
-    }
-
-    public void setSwitcherIndex() {
-        mSwitcher.setCurrentIndex(ModuleSwitcher.VIDEO_MODULE_INDEX);
     }
 
     public boolean collapseCameraControls() {
@@ -1126,5 +1131,49 @@ public class VideoUI implements PieRenderer.PieListener,
 
     public void adjustOrientation() {
         setOrientation(mOrientation, false);
+    }
+
+    // implement focusUI interface
+    private FocusIndicator getFocusIndicator() {
+        return mPieRenderer;
+    }
+
+    @Override
+    public boolean hasFaces() {
+        return false;
+    }
+
+    @Override
+    public void clearFocus() {
+        FocusIndicator indicator = getFocusIndicator();
+        if (indicator != null) indicator.clear();
+    }
+
+    @Override
+    public void setFocusPosition(int x, int y) {
+        mPieRenderer.setFocus(x, y);
+    }
+
+    @Override
+    public void onFocusStarted(){
+        getFocusIndicator().showStart();
+    }
+
+    @Override
+    public void onFocusSucceeded(boolean timeOut) {
+        getFocusIndicator().showSuccess(timeOut);
+    }
+
+    @Override
+    public void onFocusFailed(boolean timeOut) {
+        getFocusIndicator().showFail(timeOut);
+    }
+
+    @Override
+    public void pauseFaceDetection() {
+    }
+
+    @Override
+    public void resumeFaceDetection() {
     }
 }

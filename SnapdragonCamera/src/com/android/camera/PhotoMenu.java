@@ -187,15 +187,17 @@ public class PhotoMenu extends MenuController
                 CameraSettings.KEY_FLASH_MODE,
                 CameraSettings.KEY_RECORD_LOCATION,
                 CameraSettings.KEY_PICTURE_SIZE,
-                CameraSettings.KEY_JPEG_QUALITY,
+                //CameraSettings.KEY_JPEG_QUALITY,
                 CameraSettings.KEY_TIMER,
                 CameraSettings.KEY_CAMERA_SAVEPATH,
                 CameraSettings.KEY_LONGSHOT,
                 CameraSettings.KEY_FACE_DETECTION,
                 CameraSettings.KEY_ISO,
+                CameraSettings.KEY_SHUTTER_SPEED,
                 CameraSettings.KEY_EXPOSURE,
                 CameraSettings.KEY_WHITE_BALANCE,
                 CameraSettings.KEY_FOCUS_MODE,
+                CameraSettings.KEY_TOUCH_FOCUS_DURATION,
                 CameraSettings.KEY_REDEYE_REDUCTION,
                 CameraSettings.KEY_AUTO_HDR,
                 CameraSettings.KEY_HDR_MODE,
@@ -206,9 +208,9 @@ public class PhotoMenu extends MenuController
                 CameraSettings.KEY_ZSL,
                 CameraSettings.KEY_TIMER_SOUND_EFFECTS,
                 CameraSettings.KEY_FACE_RECOGNITION,
-                CameraSettings.KEY_TOUCH_AF_AEC,
+                //CameraSettings.KEY_TOUCH_AF_AEC,
                 CameraSettings.KEY_SELECTABLE_ZONE_AF,
-                CameraSettings.KEY_PICTURE_FORMAT,
+                //CameraSettings.KEY_PICTURE_FORMAT,
                 CameraSettings.KEY_SATURATION,
                 CameraSettings.KEY_CONTRAST,
                 CameraSettings.KEY_SHARPNESS,
@@ -216,7 +218,7 @@ public class PhotoMenu extends MenuController
                 CameraSettings.KEY_ANTIBANDING,
                 CameraSettings.KEY_DENOISE,
                 CameraSettings.KEY_ADVANCED_FEATURES,
-                CameraSettings.KEY_AE_BRACKET_HDR,
+                //CameraSettings.KEY_AE_BRACKET_HDR,
                 CameraSettings.KEY_MANUAL_EXPOSURE,
                 CameraSettings.KEY_MANUAL_WB,
                 CameraSettings.KEY_MANUAL_FOCUS
@@ -561,11 +563,6 @@ public class PhotoMenu extends MenuController
             return false;
         Rect rec = new Rect();
         mUI.getPreviewMenuLayout().getChildAt(0).getHitRect(rec);
-        if (View.LAYOUT_DIRECTION_RTL == TextUtils
-                .getLayoutDirectionFromLocale(Locale.getDefault())) {
-            rec.left = mUI.getRootView().getWidth() - (rec.right-rec.left);
-            rec.right = mUI.getRootView().getWidth();
-        }
         rec.top += (int) mUI.getPreviewMenuLayout().getY();
         rec.bottom += (int) mUI.getPreviewMenuLayout().getY();
         return rec.contains((int) ev.getX(), (int) ev.getY());
@@ -679,7 +676,6 @@ public class PhotoMenu extends MenuController
             popup1.setPreferenceEnabled(CameraSettings.KEY_CONTRAST, false);
             popup1.setPreferenceEnabled(CameraSettings.KEY_SHARPNESS, false);
             popup1.setPreferenceEnabled(CameraSettings.KEY_COLOR_EFFECT, false);
-            popup1.setPreferenceEnabled(CameraSettings.KEY_FLASH_MODE, false);
             popup1.setPreferenceEnabled(CameraSettings.KEY_WHITE_BALANCE, false);
             popup1.setPreferenceEnabled(CameraSettings.KEY_EXPOSURE, false);
         }
@@ -696,6 +692,11 @@ public class PhotoMenu extends MenuController
             popup1.setPreferenceEnabled(CameraSettings.KEY_FACE_RECOGNITION, false);
         }
         popup1.setPreferenceEnabled(CameraSettings.KEY_ZSL, !mUI.isCountingDown());
+
+        if (Parameters.SCENE_MODE_HDR.equals(sceneMode)) {
+            popup1.setPreferenceEnabled(CameraSettings.KEY_FLASH_MODE, false);
+            popup1.setPreferenceEnabled(CameraSettings.KEY_ZSL, false);
+        }
 
         pref = mPreferenceGroup.findPreference(CameraSettings.KEY_ADVANCED_FEATURES);
         String advancedFeatures = (pref != null) ? pref.getValue() : null;

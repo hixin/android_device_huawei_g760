@@ -29,18 +29,18 @@
 package com.android.camera;
 
 import android.content.Context;
-import android.os.UserHandle;
+import android.os.StatFs;
 import android.os.Environment;
 import android.os.storage.StorageVolume;
-import android.os.storage.StorageManager;
+import android.os.storage.IMountService;
+import android.os.ServiceManager;
 import android.util.Log;
 
 public class SDCard {
     private static final String TAG = "SDCard";
 
     private static final int VOLUME_SDCARD_INDEX = 1;
-
-    private StorageManager mStorageManager = null;
+    private IMountService mMountService = null;
     private StorageVolume mVolume = null;
     private String path = null;
     private String rawpath = null;
@@ -75,24 +75,27 @@ public class SDCard {
         return rawpath;
     }
 
-    public static void initialize(Context context) {
-        if (sSDCard == null) {
-            sSDCard = new SDCard(context);
-        }
-    }
-
     public static synchronized SDCard instance() {
+        if (sSDCard == null) {
+            sSDCard = new SDCard();
+        }
         return sSDCard;
     }
 
     private String getSDCardStorageState() {
-        return mVolume.getState();
+        try {
+            return mMountService.getVolumeState(mVolume.getPath());
+        } catch (Exception e) {
+            Log.w(TAG, "Failed to read SDCard storage state; assuming REMOVED: " + e);
+            return Environment.MEDIA_REMOVED;
+        }
     }
 
-    private SDCard(Context context) {
+    private SDCard() {
         try {
-            mStorageManager = (StorageManager) context.getSystemService(Context.STORAGE_SERVICE);
-            final StorageVolume[] volumes = mStorageManager.getVolumeList();
+            mMountService = IMountService.Stub.asInterface(ServiceManager
+                                                           .getService("mount"));
+            final StorageVolume[] volumes = mMountService.getVolumeList();
             if (volumes.length > VOLUME_SDCARD_INDEX) {
                 mVolume = volumes[VOLUME_SDCARD_INDEX];
             }

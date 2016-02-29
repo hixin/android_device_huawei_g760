@@ -109,6 +109,7 @@ public class VideoMenu extends MenuController
         mOtherKeys1 = new String[] {
                 CameraSettings.KEY_VIDEOCAMERA_FLASH_MODE,
                 CameraSettings.KEY_VIDEO_QUALITY,
+                CameraSettings.KEY_VIDEO_FOCUS_MODE,
                 CameraSettings.KEY_VIDEO_DURATION,
                 CameraSettings.KEY_RECORD_LOCATION,
                 CameraSettings.KEY_CAMERA_SAVEPATH,
@@ -118,18 +119,21 @@ public class VideoMenu extends MenuController
         mOtherKeys2 = new String[] {
                 CameraSettings.KEY_VIDEOCAMERA_FLASH_MODE,
                 CameraSettings.KEY_VIDEO_QUALITY,
-                CameraSettings.KEY_VIDEO_DURATION,
+                CameraSettings.KEY_VIDEO_FOCUS_MODE,
+                CameraSettings.KEY_VIDEO_TOUCH_FOCUS_DURATION,
+                //CameraSettings.KEY_VIDEO_DURATION,
                 CameraSettings.KEY_RECORD_LOCATION,
                 CameraSettings.KEY_CAMERA_SAVEPATH,
                 CameraSettings.KEY_WHITE_BALANCE,
                 CameraSettings.KEY_VIDEO_HIGH_FRAME_RATE,
                 CameraSettings.KEY_SEE_MORE,
-                CameraSettings.KEY_DIS,
+                //CameraSettings.KEY_DIS,
                 CameraSettings.KEY_VIDEO_EFFECT,
                 CameraSettings.KEY_VIDEO_TIME_LAPSE_FRAME_INTERVAL,
-                CameraSettings.KEY_VIDEO_ENCODER,
-                CameraSettings.KEY_AUDIO_ENCODER,
+                //CameraSettings.KEY_VIDEO_ENCODER,
+                //CameraSettings.KEY_AUDIO_ENCODER,
                 CameraSettings.KEY_VIDEO_HDR,
+                CameraSettings.KEY_ANTIBANDING,
                 CameraSettings.KEY_POWER_MODE,
                 CameraSettings.KEY_VIDEO_ROTATION,
                 CameraSettings.KEY_VIDEO_CDS_MODE,
@@ -634,7 +638,8 @@ public class VideoMenu extends MenuController
     }
 
     public void openFirstLevel() {
-        if (isMenuBeingShown() || CameraControls.isAnimating())
+        //if (isMenuBeingShown() || CameraControls.isAnimating())
+        if (CameraControls.isAnimating())
             return;
         if (mListMenu == null || mPopupStatus != POPUP_FIRST_LEVEL) {
             initializePopup();

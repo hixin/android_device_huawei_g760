@@ -462,9 +462,8 @@ public class CameraControls extends RotatableLayout {
     }
 
     public void hideUI() {
-        if(!isAnimating)
-            enableTouch(false);
         isAnimating = true;
+        enableTouch(false);
         int rotation = getUnifiedRotation();
         mFrontBackSwitcher.animate().cancel();
         if(TsMakeupManager.HAS_TS_MAKEUP) {
@@ -554,9 +553,8 @@ public class CameraControls extends RotatableLayout {
     }
 
     public void showUI() {
-        if(!isAnimating)
-            enableTouch(false);
         isAnimating = true;
+        enableTouch(false);
         int rotation = getUnifiedRotation();
         mFrontBackSwitcher.animate().cancel();
         if(TsMakeupManager.HAS_TS_MAKEUP) {
@@ -916,30 +914,6 @@ public class CameraControls extends RotatableLayout {
             ((RotateImageView) v).setOrientation(orientation, animation);
         }
         layoutRemaingPhotos();
-    }
-
-    public void hideCameraSettings() {
-        mFrontBackSwitcher.setVisibility(View.INVISIBLE);
-        if(TsMakeupManager.HAS_TS_MAKEUP) {
-            mTsMakeupSwitcher.setVisibility(View.INVISIBLE);
-        } else {
-            mHdrSwitcher.setVisibility(View.INVISIBLE);
-        }
-        mSceneModeSwitcher.setVisibility(View.INVISIBLE);
-        mFilterModeSwitcher.setVisibility(View.INVISIBLE);
-        mMenu.setVisibility(View.INVISIBLE);
-    }
-
-    public void showCameraSettings() {
-        mFrontBackSwitcher.setVisibility(View.VISIBLE);
-        if(TsMakeupManager.HAS_TS_MAKEUP) {
-            mTsMakeupSwitcher.setVisibility(View.VISIBLE);
-        } else {
-            mHdrSwitcher.setVisibility(View.VISIBLE);
-        }
-        mSceneModeSwitcher.setVisibility(View.VISIBLE);
-        mFilterModeSwitcher.setVisibility(View.VISIBLE);
-        mMenu.setVisibility(View.VISIBLE);
     }
 
     private class ArrowTextView extends TextView {

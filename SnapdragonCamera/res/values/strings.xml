@@ -17,7 +17,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <!-- The name of the Android Camera application. [CHAR LIMIT=16] -->
     <string name="app_name">Camera</string>
-    <string name="snapcam_app_name">Snapdragon Camera</string>
+    <string name="snapcam_app_name">Camera</string>
     <!-- The label for the Video Camera activity. [CHAR LIMIT=16] -->
     <string name="video_camera_label">Camcorder</string>
     <!-- Used to format short video duration in Details dialog. minutes:seconds e.g. 00:30 -->
@@ -200,7 +200,7 @@
     <string name="pref_camera_id_entry_front">Front</string>
 
     <!-- Settings screen, setting title text -->
-    <string name="pref_camera_recordlocation_title">GPS location</string>
+    <string name="pref_camera_recordlocation_title">Store location</string>
 
     <string name="pref_camera_recordlocation_default" translatable="false">none</string>
 
@@ -221,9 +221,9 @@
     <string name="pref_camera_timer_sound_title">Beep during countdown</string>
 
     <!-- Entry of camera save path -->
-    <string name="pref_camera_savepath_title">Storage</string>
+    <string name="pref_camera_savepath_title">Storage location</string>
     <string name="pref_camera_savepath_default">0</string>
-    <string name="pref_camera_savepath_entry_0">Phone</string>
+    <string name="pref_camera_savepath_entry_0">Internal storage</string>
     <string name="pref_camera_savepath_entry_1">SD Card</string>
 
     <!-- Entry of a on/off setting. The setting is turned off. [CHAR LIMIT=15] -->
@@ -237,9 +237,9 @@
     <string name="setting_on_value" translatable="false">on</string>
 
     <!-- The Video quality settings in preference [CHAR LIMIT=21] -->
-    <string name="pref_video_quality_title">Video quality</string>
-    <!-- The default quality value is NULL -->
-    <string name="pref_video_quality_default" translatable="false"></string>
+    <string name="pref_video_quality_title">Video size</string>
+    <!-- The default quality for camera 0 (rear cam) -->
+    <string name="pref_video_quality_default" translatable="false">3840x2160</string>
     <!-- Video quality setting entry.
     Videos will be recorded in 4k DCI quality. [CHAR LIMIT=24] -->
     <string name="pref_video_quality_entry_4kdci" translatable="false">
@@ -252,6 +252,8 @@
     Videos will be recorded in 4k UHD quality. [CHAR LIMIT=24] -->
     <string name="pref_video_quality_entry_4kuhd" translatable="false">
     4k UHD</string>
+    <!-- Video quality setting entry. Videos will be recorded in 1440p quality. [CHAR LIMIT=24] -->
+    <string name="pref_video_quality_entry_1440p" translatable="false">2.5k 1440p</string>
     <!-- Video quality setting entry. Videos will be recorded in 1080p quality. [CHAR LIMIT=24] -->
     <string name="pref_video_quality_entry_1080p" translatable="false">HD 1080p</string>
     <!-- Video quality setting entry. Videos will be recorded in 720p quality. [CHAR LIMIT=24] -->
@@ -261,7 +263,7 @@
 
     <!-- Describes the preference dialog for choosing interval between frame capture for
     time lapse recording. Appears at top of the dialog. [CHAR LIMIT=30] -->
-    <string name="pref_video_time_lapse_frame_interval_title">Time lapse</string>
+    <string name="pref_video_time_lapse_frame_interval_title">Timelapse</string>
     <string name="pref_video_time_lapse_frame_interval_default" translatable="false">0</string>
 
     <!-- Settings screen, Camera setting category title -->
@@ -327,7 +329,9 @@
     <string name="pref_camera_flashmode_no_flash" translatable="false">no_flash</string>
 
     <!-- Settings screen, Flash mode title -->
-    <string name="pref_camera_flashmode_title">Flash</string>
+    <string name="pref_camera_flashmode_title">Flash mode</string>
+        <!-- flash label [CHAR LIMIT=50] -->
+    <string name="pref_camera_flashmode_label">FLASH MODE</string>
 
     <!-- Settings screen, Flash mode 'auto'. [CHAR LIMIT=12] -->
     <string name="pref_camera_flashmode_entry_auto">Auto</string>
