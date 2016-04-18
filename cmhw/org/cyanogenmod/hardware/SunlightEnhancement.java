@@ -80,4 +80,5 @@ public class SunlightEnhancement {
     public static boolean isAdaptiveBacklightRequired() {
         return false;
     }
+    public static boolean isSelfManaged() { return false; }
 }

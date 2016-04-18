@@ -82,6 +82,7 @@ BOARD_CHARGER_SHOW_PERCENTAGE := true
 
 #Enable HW based full disk encryption
 TARGET_HW_DISK_ENCRYPTION := false 
+QSEECOM_DISK_ENCRYPTION := true
 
 # Fonts
 EXTENDED_FONT_FOOTPRINT := true
